@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form id="user-form">
+        <input id="email" placeholder="email">
+        <input id="password" placeholder="password">
+        <button type="submit">Submit</button>
+    </form>
+    <button id="get-btn">button</button>
+    <script>
+        document.getElementById("user-form").addEventListener("submit", (e) => {
+            e.preventDefault();
+            fetch("http://localhost:8000/api/users", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                credentials: "include"
+            })
+        });
+        document.getElementById("get-btn").addEventListener("click", () => {
+            fetch("http://localhost:8000/api/users", {
+                credentials: "include"
+            });
+        })
+    </script>
+</body>
+</html>
