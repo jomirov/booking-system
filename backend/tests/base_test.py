@@ -26,3 +26,5 @@ async def client():
     transport = ASGITransport(app=app)
     client = AsyncClient(transport=transport)
     yield client
+
+#-e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=testpassword123 -e POSTGRES_DB=test_booking_system -p 5432:5432 postgres
