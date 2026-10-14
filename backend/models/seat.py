@@ -2,6 +2,7 @@ from enum import Enum
 from pydantic import BaseModel
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
+from typing import List
 from .base import Base
 
 class SeatStatus(Enum):
@@ -17,10 +18,9 @@ class Seat(Base):
     row: Mapped[str] = mapped_column(nullable=False)
     number: Mapped[int] = mapped_column(nullable=False)
     price: Mapped[int] = mapped_column(nullable=False)
-    status: Mapped[SeatStatus] = mapped_column(default=SeatStatus.free.value)
+    status: Mapped[SeatStatus] = mapped_column(default=SeatStatus.free)
 
 class SeatCreate(BaseModel):
-    event_id: int
     row: str
     number: int
     price: int

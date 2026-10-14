@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from ..repositories.eventrepository import EventRepository
 from ..models.event import EventCreate
 
-router = APIRouter(dependencies=[EventRepository])
+router = APIRouter()
 
 @router.post('/api/events')
 async def add_event(event: EventCreate, repo: EventRepository = Depends(EventRepository)):
@@ -32,9 +32,9 @@ async def remove_event(id: int, repo: EventRepository = Depends(EventRepository)
     return JSONResponse({"message": "Event has been removed"})
 
 @router.put('/api/events/{id}/title')
-async def change_title(id: int, title = Body(), repo: EventRepository = Depends(EventRepository)):
+async def change_title(id: int, new_title: str = Body(), repo: EventRepository = Depends(EventRepository)):
     try:
-        await repo.update_event_title(id, title)
+        await repo.update_event_title(id, new_title)
     except ValueError:
         raise HTTPException(status_code=404)
 
