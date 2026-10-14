@@ -8,13 +8,7 @@ from ..database.db import init_models, drop_models, get_db_url, get_engine
 
 load_dotenv()
 
-POSTGRES_USER = os.getenv("POSTGRES_USER")
-POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
-POSTGRES_PORT = os.getenv("POSTGRES_PORT")
-TEST_POSTGRES_HOST = os.getenv("TEST_POSTGRES_HOST")
-TEST_POSTGRES_DB = os.getenv("TEST_POSTGRES_DB")
-
-test_db_url = f"postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{TEST_POSTGRES_HOST}:{POSTGRES_PORT}/{TEST_POSTGRES_DB}"
+test_db_url = f"postgresql+asyncpg://postgres:testpassword@localhost:5432/test_booking_system"
 
 pytestmark = pytest.mark.anyio
 
