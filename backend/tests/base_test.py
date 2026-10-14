@@ -8,7 +8,7 @@ from ..database.db import init_models, drop_models, get_db_url, get_engine
 
 load_dotenv()
 
-test_db_url = f"postgresql+asyncpg://postgres:testpassword@localhost:5432/test_booking_system"
+test_db_url = f"postgresql+asyncpg://postgres:testpassword123@localhost:5432/test_booking_system"
 
 pytestmark = pytest.mark.anyio
 
