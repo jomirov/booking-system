@@ -30,13 +30,8 @@ jobs:
         python -m pip install -r backend/requirements.txt
     - name: Postgres
       run: | 
-        docker run -d | 
-          -e POSTGRES_USER=postgres 
-          -e POSTGRES_PASSWORD=testpassword 
-          -e POSTGRES_DB=test_booking_system 
-          -e POSTGRES_PORT="5432:5432"
-          postgres
-        sleep 7
+        docker run -d -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=testpassword -e POSTGRES_DB=test_booking_system -e POSTGRES_PORT="5432:5432" postgres
+        sleep 10
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
