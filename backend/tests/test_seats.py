@@ -24,7 +24,7 @@ async def test_seats_creation(client: AsyncClient, session: AsyncSession):
 
     session.add(Event(id=5, title="sometitle", date=datetime.now()+timedelta(days=30)))
     await session.commit()
-    response = await client.post("http://localhost:8000/api/events/5/seats", json=expected_seats)
+    response = await client.post("http://localhost:8000/api/seats?event_id=5", json=expected_seats)
 
     q = await session.execute(select(Seat.row, Seat.number, Seat.price))
     seats = [{"row": seat.row, "number": seat.number, "price": seat.price} for seat in q]
@@ -51,7 +51,7 @@ async def test_seats_selection_by_event(client: AsyncClient, session: AsyncSessi
     session.add(Seat(id=test_data[1][0], event_id=test_data[1][1], row=test_data[1][2], number=test_data[1][3], price=test_data[1][4]))
     await session.commit()
 
-    response = await client.get("http://localhost:8000/api/events/10/seats")
+    response = await client.get("http://localhost:8000/api/seats?event_id=10")
 
     assert response.status_code == expected_status_code
     assert response.json() == expected_data
@@ -63,7 +63,7 @@ async def test_seat_deletion(client: AsyncClient, session: AsyncSession):
     session.add(Event(id=15, title="someevent", date=datetime.now() + timedelta(days=30)))
     session.add(Seat(id=15, event_id=15, row="C", number=12, price=20000))
     await session.commit()
-    response = await client.delete("http://localhost:8000/api/events/seats/15")
+    response = await client.delete("http://localhost:8000/api/seats/15")
 
     has_seat_been_deleted = True if not await session.scalar(select(Seat).where(Seat.id==15)) else False
 
@@ -82,7 +82,7 @@ async def test_seat_update(client: AsyncClient, session: AsyncSession):
     session.add(Seat(id=25, event_id=30, row="D", number=25, price=20000))
     await session.commit()
 
-    response = await client.put("http://localhost:8000/api/events/seats/25", json={"row": expected_updated_seat["row"], "number": expected_updated_seat["number"], "price": expected_updated_seat["price"]})
+    response = await client.put("http://localhost:8000/api/seats/25", json={"row": expected_updated_seat["row"], "number": expected_updated_seat["number"], "price": expected_updated_seat["price"]})
 
     q = await session.scalar(select(Seat).where(Seat.id==25))
     updated_seat = {
