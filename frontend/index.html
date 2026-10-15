@@ -11,6 +11,10 @@
         <input id="password" name="password" placeholder="password">
         <button type="submit">Submit</button>
     </form>
+    <button id="show-users">Show users</button>
+    <ul id="users-list">
+
+    </ul>
     <script>
         
         form_login = document.getElementById("form-login");
@@ -29,6 +33,25 @@
             });
 
             window.location.href = "http://localhost:8000/users/me"
+        })
+
+        document.getElementById("show-users").addEventListener("click", async () => {
+            xml_body = `
+                <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope"
+                        xmlns:tns="http://localhost:8000/api/users/xml">
+                    <soap:Body>
+                        <tns:show_users>
+                        </tns:show_users>
+                    </soap:Body>
+                </soap:Envelope>
+            `;
+            response = await fetch("http://localhost:8000/api/users/xml", {
+                method: "POST",
+                headers: {"Content-Type": "application/xml"},
+                body: xml_body
+            })
+            
+            document.getElementById("users-list").innerHTML += await response.text()
         })
     </script>
 </body>
