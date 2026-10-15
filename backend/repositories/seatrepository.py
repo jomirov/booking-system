@@ -19,6 +19,20 @@ class SeatRepository(BaseRepository):
             except IntegrityError:
                 raise ValueError("event_id")
 
+    async def get_seat(self, id):
+        async with AsyncSession(self.engine) as session:
+            res = await session.scalar(select(Seat).where(Seat.id==id))
+            if not res:
+                raise ValueError("id")
+            return {
+                "id": res.id,
+                "event_id": res.event_id,
+                "row": res.row,
+                "number": res.number,
+                "price": res.price,
+                "status": res.status
+            }
+
     async def get_seats_for_event(self, event_id):
         async with AsyncSession(self.engine) as session:
             res = await session.scalars(select(Seat).where(Seat.event_id==event_id))

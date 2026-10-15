@@ -8,8 +8,8 @@ from ..repositories.seatrepository import SeatRepository
 
 router = APIRouter()
 
-@router.post('/api/events/{event_id}/seats')
-async def add_seats(event_id: int, seats: list[SeatCreate], repo: SeatRepository = Depends(SeatRepository)):
+@router.post('/api/seats')
+async def add_seats(event_id: int = Query(), seats: list[SeatCreate] = Body(), repo: SeatRepository = Depends(SeatRepository)):
     try:
         await repo.create_seats(event_id, seats)
     except ValueError as e:
@@ -20,15 +20,25 @@ async def add_seats(event_id: int, seats: list[SeatCreate], repo: SeatRepository
 
     return JSONResponse({"message": "Seat has been created"}, status_code=201)
 
-@router.get('/api/events/{event_id}/seats')
-async def show_seats_for_event(event_id: int, repo: SeatRepository = Depends(SeatRepository)):
+@router.get('/api/seats/{id}')
+async def show_seat(id: int, repo: SeatRepository = Depends(SeatRepository)):
+    try:
+        seat = await repo.get_seat(id)
+    except ValueError as e:
+        if e.args == ('id',):
+            raise HTTPException(status_code=404)
+
+    return JSONResponse(seat)
+
+@router.get('/api/seats')
+async def show_seats_for_event(event_id: int = Query(), repo: SeatRepository = Depends(SeatRepository)):
     try:
         seats = await repo.get_seats_for_event(event_id)
     except ValueError:
         raise HTTPException(status_code=404)
     return JSONResponse(seats)
 
-@router.put('/api/events/seats/{id}')
+@router.put('/api/seats/{id}')
 async def edit_seat(id: int, new_seat: SeatCreate, repo: SeatRepository = Depends(SeatRepository)):
     try:
         await repo.update_seat(id, new_seat.row, new_seat.number, new_seat.price)
@@ -40,7 +50,7 @@ async def edit_seat(id: int, new_seat: SeatCreate, repo: SeatRepository = Depend
 
     return JSONResponse({"message": "Seat has been edited"})
 
-@router.delete('/api/events/seats/{id}')
+@router.delete('/api/seats/{id}')
 async def remove_seat(id: int, repo: SeatRepository = Depends(SeatRepository)):
     try:
         await repo.delete_seat(id)
