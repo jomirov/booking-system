@@ -42,7 +42,7 @@ class UserRepository(BaseRepository):
 
     async def delete_user(self, id):
         async with AsyncSession(self.engine) as session:
-            deleted_user_id = await session.execute(delete(User).where(User.id==id).returning(User.id))
+            deleted_user_id = await session.scalar(delete(User).where(User.id==id).returning(User.id))
             if not deleted_user_id:
                 raise ValueError
             await session.commit()
@@ -62,3 +62,19 @@ class UserRepository(BaseRepository):
                 raise ValueError
             
             await session.commit()
+
+    async def get_users(self):
+        async with AsyncSession(self.engine) as session:
+            q = await session.scalars(select(User))
+
+            users = [
+                {
+                    "id": user.id,
+                    "email": user.email,
+                    "hashed_password": user.hashed_password,
+                    "created_at": user.created_at,
+                    "updated_at": user.updated_at
+                } for user in q
+            ]
+
+            return users
