@@ -1,5 +1,3 @@
-from datetime import datetime, timezone
-from fastapi import Depends
 from sqlalchemy import select, delete, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
