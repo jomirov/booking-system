@@ -28,6 +28,18 @@ class UserRepository(BaseRepository):
                 "hashed_password": res.hashed_password
             }
 
+    async def get_user_by_email(self, email):
+        async with AsyncSession(self.engine) as session:
+            user = await session.scalar(select(User).where(User.email==email))
+
+            return {
+                "id": user.id,
+                "email": user.email,
+                "hashed_password": user.hashed_password,
+                "created_at": user.created_at,
+                "updated_at": user.updated_at
+            }
+
     async def delete_user(self, id):
         async with AsyncSession(self.engine) as session:
             deleted_user_id = await session.execute(delete(User).where(User.id==id).returning(User.id))
