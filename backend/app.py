@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Depends, HTTPException
-from fastapi.responses import JSONResponse
+from datetime import datetime, timezone, timedelta
+from fastapi import FastAPI, Depends, HTTPException, Cookie
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security.oauth2 import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
@@ -38,7 +39,7 @@ credentials_exception = HTTPException(
 )
 
 @app.post('/token')
-async def create_access_token(form_data: OAuth2PasswordRequestForm = Depends(), repo: UserRepository = Depends(UserRepository)):
+async def login(form_data: OAuth2PasswordRequestForm = Depends(), repo: UserRepository = Depends(UserRepository)):
     user = await repo.get_user_by_email(form_data.username)
     is_authenticated = authenticate_user(user, form_data.password)
 
@@ -46,12 +47,14 @@ async def create_access_token(form_data: OAuth2PasswordRequestForm = Depends(), 
         raise credentials_exception
     
     access_token = generate_token(form_data.username)
-    return JSONResponse({"access_token": access_token, "token_type": "bearer"})
+    response = JSONResponse({"access_token": access_token, "token_type": "bearer"})
+    response.set_cookie(key="access_token", value=access_token, samesite="none", secure=True, max_age=datetime.now(timezone.utc) + timedelta(minutes=10))
+    return response
 
 @app.get('/users/me')
-async def get_current_user(token: str = Depends(oauth2_scheme)):
+async def get_current_user(access_token: str = Cookie()):
     try:
-        email = verify_token(token)
+        email = verify_token(access_token)
     except:
         raise credentials_exception
     
