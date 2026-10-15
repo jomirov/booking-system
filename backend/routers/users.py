@@ -1,5 +1,5 @@
 from fastapi import Body, Depends, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from fastapi.routing import APIRouter
 
 from ..repositories.userrepository import UserRepository
@@ -49,3 +49,26 @@ async def change_password(id: int, new_password: str = Body(), repo: UserReposit
         raise HTTPException(status_code=404)
 
     return JSONResponse({"message": "User password has been changed"})
+
+@router.post('/api/users/xml')
+async def show_users(repo: UserRepository = Depends(UserRepository)):
+    users = await repo.get_users()
+
+    xml_users = ""
+    for user in users:
+        xml_users += f"<tns:User><tns:id>{user["id"]}</tns:id><tns:email>{user["email"]}</tns:email></tns:User>"
+
+    result_xml = f"""
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope"
+                xmlns:tns="http://localhost:8000/api/users/xml">
+            <soap:Body>
+                <tns:show_usersResponse>
+                    <tns:usersResult>
+                        {xml_users}
+                    </tns:usersResult>
+                </tns:show_usersResponse>
+            </soap:Body>
+        </soap:Envelope>
+    """
+
+    return Response(content=result_xml, media_type="application/xml" )
