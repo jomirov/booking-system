@@ -2,7 +2,7 @@ from fastapi import HTTPException, Depends, Query, Body
 from fastapi.routing import APIRouter
 from fastapi.responses import JSONResponse
 
-from ..models.seat import Seat, SeatCreate
+from ..models.seat import SeatCreate
 from ..repositories.seatrepository import SeatRepository
 
 

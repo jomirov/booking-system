@@ -1,4 +1,4 @@
-import pytest, time
+import pytest
 from datetime import datetime, timedelta
 from sqlalchemy import select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
