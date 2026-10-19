@@ -9,10 +9,10 @@ from .database.db import init_models, get_engine, get_db_url
 from .routers import users, events, seats, bookings
 from .dependencies import generate_token, verify_token, authenticate_user
 from .repositories.userrepository import UserRepository
-from .utils import redis
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    from .utils import redis
     engine = get_engine(get_db_url())
     await init_models(engine)
     yield

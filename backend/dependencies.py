@@ -1,7 +1,8 @@
-import jwt, os, httpx
+import jwt, os
 from jwt.exceptions import InvalidTokenError
 from datetime import datetime, timezone, timedelta
 from pwdlib import PasswordHash
+from httpx import AsyncClient
 
 def hash_password(password):
 
@@ -34,5 +35,6 @@ def verify_token(token) -> str:
 
     return email
 
-def check_bookings():
-    httpx.get("http://server:8000/api/bookings")
+async def check_expired_bookings():
+    async with AsyncClient() as client:
+        await client.put(url="http://server:8000/api/bookings/expired")
