@@ -5,6 +5,7 @@ from rq_scheduler import Scheduler
 from ..dependencies import check_bookings
 
 r = redis.Redis(host="redis")
+r.flushall()
 
 q = Queue(connection=r)
 
