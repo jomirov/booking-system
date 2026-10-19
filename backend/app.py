@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone, timedelta
 from fastapi import FastAPI, Depends, HTTPException, Cookie
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security.oauth2 import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
@@ -9,6 +9,7 @@ from .database.db import init_models, get_engine, get_db_url
 from .routers import users, events, seats, bookings
 from .dependencies import generate_token, verify_token, authenticate_user
 from .repositories.userrepository import UserRepository
+from .utils import redis
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
