@@ -25,7 +25,7 @@ RUN adduser \
     --disabled-password \
     --gecos "" \
     --home "/nonexistent" \
-    --shell "/sbin/nologin"
+    --shell "/sbin/nologin" \
     --no-create-home \
     --uid "${UID}" \
     appuser
