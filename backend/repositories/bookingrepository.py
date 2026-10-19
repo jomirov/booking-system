@@ -32,3 +32,20 @@ class BookingRepository(BaseRepository):
                 await session.commit()
             except KeyError:
                 raise ValueError("Status")
+
+    async def get_bookings(self):
+        async with AsyncSession(self.engine) as session:
+            res = await session.scalars(select(Booking))
+
+            bookings = [
+                {
+                    "id": booking.id,
+                    "user_id": booking.user_id,
+                    "seat_id": booking.seat_id,
+                    "status": booking.status.value,
+                    "created_at": datetime.strftime(booking.created_at, "%Y-%m-%d %H:%M:%S"),
+                    "expires_at": datetime.strftime(booking.expires_at, "%Y-%m-%d %H:%M:%S")
+                } for booking in res
+            ]
+
+            return bookings

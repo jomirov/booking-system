@@ -31,3 +31,9 @@ async def change_booking_status(id: int, status: str = Body(), repo: BookingRepo
         elif e.args == ('status',):
             raise HTTPException(status_code=400, detail="Status value is incorrect")
     return JSONResponse({"message": "Booking status has been updated"})
+
+@router.get('/api/bookings')
+async def show_bookings(repo: BookingRepository = Depends(BookingRepository)):
+    bookings = await repo.get_bookings()
+
+    return JSONResponse(bookings)
