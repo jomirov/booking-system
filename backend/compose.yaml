@@ -9,12 +9,12 @@
 # https://github.com/docker/awesome-compose
 services:
   server:
-    build:
-      context: .
+    build: .
     ports:
       - 8000:8000
     depends_on:
       - db
+      - redis
     env_file: .env
     develop:
       watch:
@@ -29,6 +29,20 @@ services:
     volumes:
       - db-data:/var/lib/postgresql
     env_file: .env
+  
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+  
+  rq-scheduler:
+    build: .
+    command: rqscheduler --host redis
+  
+  rq-worker:
+    build: .
+    working_dir: /app
+    command: rq worker --url redis://redis:6379
   
 volumes:
   db-data:

@@ -1,4 +1,4 @@
-import jwt, os
+import jwt, os, httpx
 from jwt.exceptions import InvalidTokenError
 from datetime import datetime, timezone, timedelta
 from pwdlib import PasswordHash
@@ -33,3 +33,6 @@ def verify_token(token) -> str:
         return None
 
     return email
+
+def check_bookings():
+    httpx.get("http://server:8000/api/bookings")
