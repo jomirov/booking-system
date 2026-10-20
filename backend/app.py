@@ -41,7 +41,11 @@ credentials_exception = HTTPException(
 
 @app.post('/token')
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), repo: UserRepository = Depends(UserRepository)):
-    user = await repo.get_user_by_email(form_data.username)
+    try:
+        user = await repo.get_user_by_email(form_data.username)
+    except ValueError:
+        raise credentials_exception
+    
     is_authenticated = authenticate_user(user, form_data.password)
 
     if not is_authenticated:

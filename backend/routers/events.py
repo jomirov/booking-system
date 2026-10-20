@@ -13,6 +13,11 @@ async def add_event(event: EventCreate, repo: EventRepository = Depends(EventRep
 
     return JSONResponse({"message": "Event has been created"}, status_code=201)
 
+@router.get('/api/events')
+async def show_active_events(repo: EventRepository = Depends(EventRepository)):
+    events = await repo.get_active_events()
+    return JSONResponse(events)
+
 @router.get('/api/events/{id}')
 async def show_event(id: int, repo: EventRepository = Depends(EventRepository)):
     try:

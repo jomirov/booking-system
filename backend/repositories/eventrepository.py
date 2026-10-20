@@ -16,6 +16,20 @@ class EventRepository(BaseRepository):
             session.add(event)
             await session.commit()
 
+    async def get_active_events(self):
+        async with AsyncSession(self.engine) as session:
+            res = await session.scalars(select(Event).where(Event.date > datetime.now(timezone.utc)))
+
+            events = [
+                {
+                    "id": event.id,
+                    "title": event.title,
+                    "date": datetime.strftime(event.date, "%Y-%m-%d")
+                } for event in res
+            ]
+
+            return events
+
     async def get_event(self, id):
         async with AsyncSession(self.engine) as session:
             event = await session.scalar(select(Event).where(Event.id==id))

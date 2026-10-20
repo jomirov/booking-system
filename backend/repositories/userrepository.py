@@ -31,7 +31,8 @@ class UserRepository(BaseRepository):
     async def get_user_by_email(self, email):
         async with AsyncSession(self.engine) as session:
             user = await session.scalar(select(User).where(User.email==email))
-
+            if not user:
+                raise ValueError
             return {
                 "id": user.id,
                 "email": user.email,
