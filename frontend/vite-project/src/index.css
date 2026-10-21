@@ -1,0 +1,179 @@
+* {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --transparent-grey: rgba(0,0,0,0.3);
+    --ocean-blue: rgb(35, 80, 242);
+    --white-gradient: linear-gradient(to right bottom, rgb(228, 234, 250), rgb(209, 216, 254));
+}
+
+html, body {
+    height: 100%;
+    background: var(--transparent-grey);
+}
+
+.form-authentication {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    width: max-content;
+    height: max-content;
+    margin-inline: auto;
+    background: var(--white-gradient);
+    position: relative;
+    top: 100px;
+    gap: 10px;
+    border-radius: 20px;
+}
+
+.form-authentication h4 {
+    text-align: center;
+}
+
+.form-authentication label {
+    font-size: 0.95rem
+}
+
+.form-authentication input {
+    padding: 5px;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    width: 15rem;
+    outline: none;
+}
+
+.form-authentication button, .form-authentication a {
+    padding-block: 6px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.form-authentication button {
+    background-color: var(--ocean-blue);
+    color: white;
+}
+
+.form-authentication a {
+    border: 1px solid lightgrey;
+    background: white;
+    text-align: center;
+    text-decoration: none;
+    color: black;
+}
+
+
+header {
+    background: var(--white-gradient);
+    padding: 13px;
+}
+
+
+#header-logout-btn, #header-login-btn {
+    display: flex;
+    width: 70px;
+    padding: 10px;
+    border-radius: 5px;
+    justify-content: center;
+    border: none;
+    justify-self: end;
+    cursor: pointer;
+    color: white;
+}
+
+
+
+
+#header-logout-btn {
+    background: red;
+}
+
+#header-login-btn {
+    background: var(--ocean-blue);
+}
+
+
+
+
+
+.events-container {
+    display: flex;
+    flex-direction: column;
+    background: var(--white-gradient);
+    width: 700px;
+    justify-self: center;
+    padding: 20px;
+    position: relative;
+    top: 50px;
+    border-radius: 20px;
+}
+
+
+#events-list {
+    list-style: none;
+    width: 100%;
+    font-size: 0.95rem;
+    position: relative;
+    top: 20px;
+}
+
+#events-list li {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid lightgrey;
+    padding: 20px;
+}
+#events-list li:nth-child(1) {
+    border-top: 1px solid lightgrey;
+}
+#events-list li a {
+    color: white;
+    text-decoration: none;
+    background: var(--ocean-blue);
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+
+
+
+#event-details-container {
+    display: flex;
+    flex-direction: column;
+    width: 700px;
+    background: var(--white-gradient);
+    border-radius: 20px;
+    justify-self: center;
+    height: 400px;
+    position: relative;
+    top: 20px;
+    padding: 30px;
+    font-size: 0.95rem;
+    gap: 10px;
+}
+
+
+#seats-list {
+    display: flex;
+    width: 200px;
+    flex-wrap: wrap;
+    list-style: none;
+    gap: 20px;
+}
+
+#seats-list li {
+    width: max-content;
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+#seats-list li a{
+    text-decoration: none;
+    color: white;
+}
