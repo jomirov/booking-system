@@ -9,8 +9,10 @@ class Event(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(nullable=False)
+    location: Mapped[str] = mapped_column(nullable=False)
     date: Mapped[datetime] = mapped_column(Date, nullable=False)
 
 class EventCreate(BaseModel):
     title: str
+    location: str
     date: str

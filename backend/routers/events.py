@@ -9,7 +9,7 @@ router = APIRouter()
 
 @router.post('/api/events')
 async def add_event(event: EventCreate, repo: EventRepository = Depends(EventRepository)):
-    await repo.create_event(event.title, event.date)
+    await repo.create_event(event.title, event.date, event.location)
 
     return JSONResponse({"message": "Event has been created"}, status_code=201)
 
@@ -35,12 +35,3 @@ async def remove_event(id: int, repo: EventRepository = Depends(EventRepository)
         raise HTTPException(status_code=404)
 
     return JSONResponse({"message": "Event has been removed"})
-
-@router.put('/api/events/{id}/title')
-async def change_title(id: int, new_title: str = Body(), repo: EventRepository = Depends(EventRepository)):
-    try:
-        await repo.update_event_title(id, new_title)
-    except ValueError:
-        raise HTTPException(status_code=404)
-
-    return JSONResponse({"message": "Event title has been changed"})

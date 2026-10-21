@@ -22,7 +22,7 @@ async def test_seats_creation(client: AsyncClient, session: AsyncSession):
             "price": 10000,
         })
 
-    session.add(Event(id=5, title="sometitle", date=datetime.now()+timedelta(days=30)))
+    session.add(Event(id=5, title="sometitle", date=datetime.now()+timedelta(days=30), location="Almaty"))
     await session.commit()
     response = await client.post("http://localhost:8000/api/seats?event_id=5", json=expected_seats)
 
@@ -46,7 +46,7 @@ async def test_seats_selection_by_event(client: AsyncClient, session: AsyncSessi
         } for data in test_data
     ]
 
-    session.add(Event(id=10, title="sometitle", date=datetime.now() + timedelta(days=30)))
+    session.add(Event(id=10, title="sometitle", date=datetime.now() + timedelta(days=30), location="Almaty"))
     session.add(Seat(id=test_data[0][0], event_id=test_data[0][1], row=test_data[0][2], number=test_data[0][3], price=test_data[0][4]))
     session.add(Seat(id=test_data[1][0], event_id=test_data[1][1], row=test_data[1][2], number=test_data[1][3], price=test_data[1][4]))
     await session.commit()
@@ -60,7 +60,7 @@ async def test_seats_selection_by_event(client: AsyncClient, session: AsyncSessi
 async def test_seat_deletion(client: AsyncClient, session: AsyncSession):
     expected_status_code = 200
 
-    session.add(Event(id=15, title="someevent", date=datetime.now() + timedelta(days=30)))
+    session.add(Event(id=15, title="someevent", date=datetime.now() + timedelta(days=30), location="Almaty"))
     session.add(Seat(id=15, event_id=15, row="C", number=12, price=20000))
     await session.commit()
     response = await client.delete("http://localhost:8000/api/seats/15")
@@ -78,7 +78,7 @@ async def test_seat_update(client: AsyncClient, session: AsyncSession):
         "price": 25000
     }
 
-    session.add(Event(id=30, title="someeventtitle123", date=datetime.now() + timedelta(days=29)))
+    session.add(Event(id=30, title="someeventtitle123", date=datetime.now() + timedelta(days=29), location="Almaty"))
     session.add(Seat(id=25, event_id=30, row="D", number=25, price=20000))
     await session.commit()
 

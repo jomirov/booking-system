@@ -51,16 +51,22 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), repo: UserRepo
     if not is_authenticated:
         raise credentials_exception
     
-    access_token = generate_token(form_data.username)
+    access_token = generate_token(user["id"], form_data.username)
     response = JSONResponse({"access_token": access_token, "token_type": "bearer"})
-    response.set_cookie(key="access_token", value=access_token, samesite="none", secure=True, max_age=datetime.now(timezone.utc) + timedelta(minutes=10))
+    response.set_cookie(key="access_token", value=access_token, samesite="none", secure=True, max_age=600)
+    return response
+
+@app.delete("/token")
+async def drop_token():
+    response = JSONResponse({"message": "Your token is dropped"})
+    response.delete_cookie("access_token")
     return response
 
 @app.get('/users/me')
 async def get_current_user(access_token: str = Cookie()):
     try:
-        email = verify_token(access_token)
+        user = verify_token(access_token)
     except:
         raise credentials_exception
     
-    return JSONResponse({"current_user_email": email})
+    return JSONResponse({"current_user_id": user["id"], "current_user_email": user["email"]})
