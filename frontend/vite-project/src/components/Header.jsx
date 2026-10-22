@@ -15,15 +15,20 @@ export default function Header () {
     function goToLogin() {
         navigate('/login');
     }
+    function goBack() {
+        navigate(-1);
+    }
+    let backBtn = (window.location.pathname != "/") ? (<button id="header-back-btn" onClick={goBack}>Артқа</button>) : (<div></div>)
     let header;
     if (!(window.location.pathname === "/login" || window.location.pathname === "/signup")) {
         if (!localStorage.getItem("userId")) {
             header = (
                 <header>
+                    {backBtn}
                     <button id="header-login-btn" onClick={goToLogin}>Кіру</button>
                 </header>
             )
-        } else header = <header><button id="header-logout-btn" onClick={logOut}>Шығу</button></header>
+        } else header = <header>{backBtn}<button id="header-logout-btn" onClick={logOut}>Шығу</button></header>
     }
     return (
         <>{ header }</>

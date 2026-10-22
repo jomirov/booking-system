@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router'
 
 function Event({event}) {
@@ -7,7 +8,7 @@ function Event({event}) {
                 <p id="event-title">{event.title}</p>
                 <p id="event-date">{event.date}</p>
                 <p id="event-location">{event.location}</p>
-                <Link to={`/events/${event.id}`}>Қарау</Link>
+                <Link id="event-details-btn" to={`/events/${event.id}`}>Қарау</Link>
             </li>
         </>
     )

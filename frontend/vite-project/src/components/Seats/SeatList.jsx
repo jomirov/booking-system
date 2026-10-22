@@ -10,6 +10,7 @@ function SeatList({eventId, eventTitle}) {
             let data = await res.json();
             setSeats(await data);
         }
+        
         fetchSeatsForEvent();
     }, [eventId])
 

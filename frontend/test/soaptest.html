@@ -12,7 +12,7 @@
         <button type="submit">Submit</button>
     </form>
     <button id="show-users">Show users</button>
-    <ul id="users-list">
+    <ul id="users-list">&LeftArrow;
 
     </ul>
     <script>
@@ -53,6 +53,7 @@
             
             document.getElementById("users-list").innerHTML += await response.text()
         })
+        
     </script>
 </body>
 </html> 

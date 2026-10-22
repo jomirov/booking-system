@@ -1,13 +1,18 @@
 import SeatList from '../../components/Seats/SeatList'
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router'
+import { useParams } from 'react-router'
+import { isLogged } from '../Authentication/Login';
+
+export async function checkUser() {
+    if (!(await isLogged())) window.location.href = "/login";
+}
 
 function EventDetail() {
     const [event, setEvent] = useState({});
     const params = useParams();
-    const navigate = useNavigate();
 
     useEffect(() => {
+        checkUser();
         async function fetchEvent() {
             let res = await fetch(`http://localhost:8000/api/events/${params.eventId}`);
             let data = await res.json();

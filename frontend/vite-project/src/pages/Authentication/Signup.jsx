@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router'
-import { isLogged } from './Login'
+import { noticeLogin } from './Login'
 
 async function signupRequest() {
     let email = document.getElementById("email").value;
@@ -32,10 +32,7 @@ function Signup() {
     const navigate = useNavigate();
     useEffect(() => {
         
-        if (isLogged()) {
-            alert("You're already logged in!");
-            navigate("/");
-        }
+        noticeLogin();
     }, [])
     return (
         <>

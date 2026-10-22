@@ -70,23 +70,33 @@ html, body {
 header {
     background: var(--white-gradient);
     padding: 13px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
 
 
-#header-logout-btn, #header-login-btn {
+
+
+#header-logout-btn, #header-login-btn, #header-back-btn {
     display: flex;
     width: 70px;
     padding: 10px;
     border-radius: 5px;
     justify-content: center;
     border: none;
-    justify-self: end;
     cursor: pointer;
     color: white;
 }
 
+#header-back-btn {
+    background: var(--ocean-blue)
+}
 
-
+#header-logout-btn, #header-login-btn {
+    justify-self: end;
+}
 
 #header-logout-btn {
     background: red;
@@ -173,7 +183,31 @@ header {
     padding: 5px 10px;
 }
 
-#seats-list li a{
+#seats-list li a, #seats-list li #seat-view{
     text-decoration: none;
     color: white;
+}
+
+
+
+#seat-details-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-self: center;
+    width: 200px;
+    padding: 20px;
+    background: var(--white-gradient);
+    border-radius: 20px;
+    position: relative;
+    top: 80px;
+}
+
+#seat-details-container button {
+    padding: 5px;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    background: var(--ocean-blue);
+    color: white;
+    cursor: pointer;
 }

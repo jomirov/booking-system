@@ -26,7 +26,9 @@ async function fetchToken() {
     let data = await response.json();
     
     if (!response.ok) {
-        return false
+        localStorage.removeItem("userId");
+        localStorage.removeItem("userEmail");
+        return false;
     }
 
     localStorage.setItem("userId", data.current_user_id);
@@ -35,18 +37,22 @@ async function fetchToken() {
     return true;
 }
 
-export function isLogged() {
-    return localStorage.getItem("userId");
+export async function isLogged() {
+    return (await fetchToken());
+}
+
+export async function noticeLogin() {
+    if ((await isLogged())) {
+        alert("You're already logged in!");
+        window.location.href = "/";
+    }
 }
 
 function Login() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (isLogged()) {
-            alert("You're already logged in!");
-            navigate("/");
-        }
+        noticeLogin();
     }, []);
 
     async function handleLoginSubmit(e) {
