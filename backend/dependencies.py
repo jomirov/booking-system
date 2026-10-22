@@ -34,4 +34,7 @@ def verify_token(token) -> dict:
 
 async def check_expired_bookings():
     async with AsyncClient() as client:
-        await client.put(url="http://server:8000/api/bookings/expired")
+        try:
+            res = await client.put(url="http://server:8000/api/bookings/expired")
+        except:
+            print("SERVER DOESN'T RESPOND")

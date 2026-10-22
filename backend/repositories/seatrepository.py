@@ -1,8 +1,8 @@
-from sqlalchemy import select, delete, update
+from sqlalchemy import select, delete, update, asc
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..models.seat import Seat, SeatCreate
+from ..models.seat import Seat, SeatCreate, SeatStatus
 from .baserepository import BaseRepository
 
 class SeatRepository(BaseRepository):
@@ -30,12 +30,12 @@ class SeatRepository(BaseRepository):
                 "row": res.row,
                 "number": res.number,
                 "price": res.price,
-                "status": res.status
+                "status": res.status.value
             }
 
     async def get_seats_for_event(self, event_id):
         async with AsyncSession(self.engine) as session:
-            res = await session.scalars(select(Seat).where(Seat.event_id==event_id))
+            res = await session.scalars(select(Seat).where(Seat.event_id==event_id).order_by(asc(Seat.row)))
 
             if not res:
                 raise ValueError
@@ -71,4 +71,19 @@ class SeatRepository(BaseRepository):
 
             if not updated_seat_id:
                 raise ValueError("seat")
+
+    async def update_seat_status(self, id, new_status):
+        async with AsyncSession(self.engine) as session:
+            status = SeatStatus._value2member_map_[new_status]
+            updated_seat_id = await session.execute(update(Seat).where(Seat.id==id).values(status=status).returning(Seat.id))
+            await session.commit()
+
+            if not updated_seat_id:
+                raise ValueError
             
+    async def update_many_seats_status(self, seats_id, new_status):
+        async with AsyncSession(self.engine) as session:
+            status = SeatStatus._value2member_map_[new_status]
+        
+            await session.execute(update(Seat).where(Seat.id.in_(seats_id)).values(status=status))
+            await session.commit()
