@@ -74,6 +74,7 @@ class SeatRepository(BaseRepository):
 
     async def update_seat_status(self, id, new_status):
         async with AsyncSession(self.engine) as session:
+            await session.execute(select(Seat).with_for_update(nowait=True))
             status = SeatStatus._value2member_map_[new_status]
             updated_seat_id = await session.execute(update(Seat).where(Seat.id==id).values(status=status).returning(Seat.id))
             await session.commit()
