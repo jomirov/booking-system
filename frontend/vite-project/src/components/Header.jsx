@@ -1,8 +1,9 @@
-import { useNavigate } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 
 
 export default function Header () {
     const navigate = useNavigate();
+    const params = useParams();
     async function logOut() {
         let res = await fetch("http://localhost:8000/token", {method: "DELETE", credentials: 'include'});
         if (!res.ok) {
@@ -16,7 +17,9 @@ export default function Header () {
         navigate('/login');
     }
     function goBack() {
-        navigate(-1);
+        if (window.location.pathname.includes("/seats")) navigate(-1); 
+        else if (window.location.pathname.includes("/events")) navigate("/");
+        else navigate(-1);
     }
     let backBtn = (window.location.pathname != "/") ? (<button id="header-back-btn" onClick={goBack}>Артқа</button>) : (<div></div>)
     let header;
