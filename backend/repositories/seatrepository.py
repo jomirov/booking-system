@@ -1,6 +1,7 @@
-from sqlalchemy import select, delete, update, asc
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy import select, delete, update, asc, and_
+from sqlalchemy.exc import IntegrityError, DBAPIError
 from sqlalchemy.ext.asyncio import AsyncSession
+import asyncio
 
 from ..models.seat import Seat, SeatCreate, SeatStatus
 from .baserepository import BaseRepository
@@ -74,17 +75,27 @@ class SeatRepository(BaseRepository):
 
     async def update_seat_status(self, id, new_status):
         async with AsyncSession(self.engine) as session:
-            await session.execute(select(Seat).where(Seat.id==id).with_for_update(nowait=True))
             status = SeatStatus._value2member_map_[new_status]
             updated_seat_id = await session.execute(update(Seat).where(Seat.id==id).values(status=status).returning(Seat.id))
             await session.commit()
 
             if not updated_seat_id:
                 raise ValueError
-            
+
+    async def update_free_seat_status(self, id, new_status):
+        async with AsyncSession(self.engine) as session:
+            try:
+                await session.execute(select(Seat).where(Seat.id==id).with_for_update(nowait=True))
+                await asyncio.sleep(3)
+            except DBAPIError:
+                raise ValueError("Seat is already reserved")
+            status = SeatStatus._value2member_map_[new_status]
+            updated_seat_id = await session.scalar(update(Seat).where(and_(Seat.id==id, Seat.status==SeatStatus.free)).values(status=status).returning(Seat.id))
+            await session.commit()
     async def update_many_seats_status(self, seats_id, new_status):
+        if not seats_id:
+            return
         async with AsyncSession(self.engine) as session:
             status = SeatStatus._value2member_map_[new_status]
-        
             await session.execute(update(Seat).where(Seat.id.in_(seats_id)).values(status=status))
             await session.commit()

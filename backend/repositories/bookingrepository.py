@@ -10,8 +10,10 @@ class BookingRepository(BaseRepository):
     async def create_booking(self, user_id, seat_id):
         async with AsyncSession(self.engine) as session:
             try:
-                session.add(Booking(user_id=user_id, seat_id=seat_id))
-                await session.commit()
+                active_seat_booking = await session.scalar(select(Booking).where(and_(Booking.seat_id==seat_id, Booking.status==BookingStatus.pending)))
+                if not active_seat_booking:
+                    session.add(Booking(user_id=user_id, seat_id=seat_id))
+                    await session.commit()
             except IntegrityError:
                 raise ValueError("Given user or seat id is not found")
 
@@ -56,11 +58,11 @@ class BookingRepository(BaseRepository):
 
     async def update_inactive_user_bookings_status_except_one(self, seat_id, user_id):
         async with AsyncSession(self.engine) as session:
-            res = await session.execute(update(Booking).where(
+            res = await session.scalars(update(Booking).where(
                 and_(and_(Booking.seat_id != seat_id, Booking.user_id==user_id), Booking.status==BookingStatus.pending)
             ).values(status=BookingStatus.cancelled).returning(Booking.seat_id))
             await session.commit()
-            updated_bookings_seats_id = [row[0] for row in res]
+            updated_bookings_seats_id = [id for id in res]
             return updated_bookings_seats_id
 
     async def get_active_user_booking(self, user_id):

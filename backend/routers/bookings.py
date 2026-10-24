@@ -1,6 +1,7 @@
-from fastapi import HTTPException, Depends, Body, Query
+from fastapi import HTTPException, Depends, Query
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRouter
+from sqlalchemy.exc import DBAPIError
 
 from ..models.booking import BookingCreate
 from ..repositories.bookingrepository import BookingRepository
@@ -13,15 +14,13 @@ async def add_booking_and_reserve_seat_and_cancel_other_bookings_of_user(booking
                                        book_repo: BookingRepository = Depends(BookingRepository),
                                        seat_repo: SeatRepository = Depends(SeatRepository)):
     try:
+        await seat_repo.update_free_seat_status(booking.seat_id, "RESERVED")
         await book_repo.create_booking(booking.user_id, booking.seat_id)
-        await seat_repo.update_seat_status(booking.seat_id, "RESERVED")
-
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=e)
-    
+        raise HTTPException(status_code=409, detail=e.args[0])
     updated_bookings_seats_id = await book_repo.update_inactive_user_bookings_status_except_one(booking.seat_id, booking.user_id)
-    
-    await seat_repo.update_many_seats_status(updated_bookings_seats_id, "FREE")
+    if updated_bookings_seats_id != []:
+        await seat_repo.update_many_seats_status(updated_bookings_seats_id, "FREE")
 
     return JSONResponse({"message": "Booking has been created"}, status_code=201)
 # User picks a seat for book (Server checks if there is active booking of user related to current seat ? 
