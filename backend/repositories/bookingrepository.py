@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from sqlalchemy import select, update, and_, asc
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
@@ -12,7 +12,7 @@ class BookingRepository(BaseRepository):
             try:
                 active_seat_booking = await session.scalar(select(Booking).where(and_(Booking.seat_id==seat_id, Booking.status==BookingStatus.pending)))
                 if not active_seat_booking:
-                    session.add(Booking(user_id=user_id, seat_id=seat_id))
+                    session.add(Booking(user_id=user_id, seat_id=seat_id, created_at=datetime.now(tz=timezone.utc), expires_at=(datetime.now(timezone.utc)+timedelta(minutes=5))))
                     await session.commit()
             except IntegrityError:
                 raise ValueError("Given user or seat id is not found")
@@ -35,12 +35,12 @@ class BookingRepository(BaseRepository):
 
     async def update_expired_bookings(self):
         async with AsyncSession(self.engine) as session:
-            res = await session.execute(update(Booking).where(
+            res = await session.scalars(update(Booking).where(
                 and_(Booking.expires_at <= datetime.now(tz=timezone.utc),                                                    
                     Booking.status == BookingStatus.pending))
                     .values(status=BookingStatus.expired).returning(Booking.seat_id))
             await session.commit()
-            updated_seats_id = [row[0] for row in res]
+            updated_seats_id = [id for id in res]
             return updated_seats_id
 
     async def update_booking_status(self, id, new_status):

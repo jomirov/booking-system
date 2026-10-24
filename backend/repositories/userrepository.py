@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from sqlalchemy import select, delete, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,7 +11,7 @@ class UserRepository(BaseRepository):
         async with AsyncSession(self.engine) as session:
             hashed_password = hash_password(password)
             
-            user = User(email=email, hashed_password=hashed_password)
+            user = User(email=email, hashed_password=hashed_password, created_at=datetime.now(timezone.utc))
 
             session.add(user)
             await session.commit()
