@@ -17,8 +17,10 @@ function SeatDetail() {
         checkUser();
         async function logBooking() {
             let activeBooking = await getActiveBooking();
+            let currentSeatId = params.seatId;
+            localStorage.setItem("currentSeatId", currentSeatId);
             
-            if (!activeBooking || (activeBooking.seat_id != params.seatId)) {
+            if (!activeBooking || (activeBooking.seat_id != currentSeatId)) {
                 fetch("http://localhost:8000/api/bookings", {
                     method: 'POST',
                     headers: {"Content-Type": "application/json"},
@@ -34,12 +36,16 @@ function SeatDetail() {
     }, [])
     
     async function bookSeat() {
-        fetch(`http://localhost:8000/api/bookings/book?user_id=${localStorage.getItem("userId")}`, {method: "PUT"});
-        
-        alert("Билет сіздің электронды поштаңызға жіберілді!");
-        navigate(`/events/${params.eventId}`);
+        document.getElementById("seat-details-container").innerHTML = "Loading...";
+        setTimeout(() => {
+            fetch(`http://localhost:8000/api/bookings/book?user_id=${localStorage.getItem("userId")}`, {method: "PUT"});
+            
+            alert("Билет сіздің электронды поштаңызға жіберілді!");
+            navigate(`/events/${params.eventId}`);
+        }, 3000)
     }
 
+    
     return (
         <div id="seat-details-container">
             <p>Іс-шара аты: {searchParams.get("eventTitle")}</p>
@@ -50,5 +56,4 @@ function SeatDetail() {
         </div>
     )
 }
-
 export default SeatDetail;

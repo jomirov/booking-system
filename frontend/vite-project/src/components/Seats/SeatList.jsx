@@ -10,13 +10,16 @@ function SeatList({eventId, eventTitle}) {
             let data = await res.json();
             setSeats(await data);
         }
-        
-        fetchSeatsForEvent();
+        setTimeout(() => {
+            fetchSeatsForEvent();  
+            document.getElementById("seats-list").removeChild(document.getElementById("loading-text"));
+        }, 3000)
     }, [eventId])
 
     return (
         <>
             <ul id="seats-list">
+                <p id="loading-text">Loading...</p>
                 {seats.map((seat) => (
                     <Seat key={seat.id} seat={seat} eventTitle={eventTitle}/>
                 ))}
