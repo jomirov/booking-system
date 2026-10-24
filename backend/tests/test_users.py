@@ -3,12 +3,10 @@ from httpx import AsyncClient
 from sqlalchemy import select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .base_test import client, session, pytestmark
 from ..models.user import User
 from ..dependencies import verify_password
 
-pytest.mark.usefixtures("client")
-pytest.mark.usefixtures("session")
+pytestmark = pytest.mark.anyio
 
 async def test_user_creation(client: AsyncClient, session: AsyncSession):
     expected_status_code = 201

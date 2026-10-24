@@ -5,10 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from httpx import AsyncClient
 
 from ..models.event import Event
-from .base_test import pytestmark, client, session
 
-pytest.mark.usefixtures("client")
-pytest.mark.usefixtures("session")
+pytestmark = pytest.mark.anyio
 
 async def test_event_creation(client: AsyncClient, session: AsyncSession):
     expected_status_code = 201
