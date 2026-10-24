@@ -4,7 +4,7 @@ from ..models.seat import Seat
 from ..models.booking import Booking
 
 import pytest, asyncio
-from datetime import datetime
+from datetime import datetime, timezone
 from httpx import AsyncClient
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,8 +12,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 pytestmark = pytest.mark.anyio
 
 async def test_asynchronous_requests_for_booking(client: AsyncClient, session: AsyncSession):
-    session.add(User(id=77, email="testmail1281924@gmail.com", hashed_password="testpasswordasd"))
-    session.add(User(id=78, email="test124mail1281924@gmail.com", hashed_password="testp124asswordasd"))
+    session.add(User(id=77, email="testmail1281924@gmail.com", hashed_password="testpasswordasd", created_at=datetime.now(timezone.utc)))
+    session.add(User(id=78, email="test124mail1281924@gmail.com", hashed_password="testp124asswordasd", created_at=datetime.now(timezone.utc)))
     session.add(Event(id=77, title="Concert", date=datetime.strptime("2026-12-24", "%Y-%m-%d"), location="Almaty"))
     session.add(Seat(id=77, event_id=77, row="W", number=10, price=100000))
     await session.commit()

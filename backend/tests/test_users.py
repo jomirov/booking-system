@@ -1,4 +1,5 @@
 import pytest
+from datetime import datetime, timezone
 from httpx import AsyncClient
 from sqlalchemy import select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -24,7 +25,7 @@ async def test_user_selection(client: AsyncClient, session: AsyncSession):
     expected_status_code = 200
     expected_user_email = "selectiontestemail@gmail.com"
 
-    session.add(User(id=10, email=expected_user_email, hashed_password="fake_hashed_password123"))
+    session.add(User(id=10, email=expected_user_email, hashed_password="fake_hashed_password123", created_at=datetime.now(timezone.utc)))
     await session.commit()
 
     get_response = await client.get("http://localhost:8000/api/users/10")
@@ -37,7 +38,7 @@ async def test_user_email_and_password_update(client: AsyncClient, session: Asyn
     expected_new_email = "newchangedtestemail@gmail.com"
     expected_new_password = "newchangedfakepassword123"
 
-    session.add(User(id=11, email="sometestemail@gmail.com", hashed_password="fake_hashed_password12849"))
+    session.add(User(id=11, email="sometestemail@gmail.com", hashed_password="fake_hashed_password12849", created_at=datetime.now(timezone.utc)))
     await session.commit()
 
     put_email_response = await client.put("http://localhost:8000/api/users/11/email", content=expected_new_email)
@@ -53,7 +54,7 @@ async def test_user_email_and_password_update(client: AsyncClient, session: Asyn
 async def test_user_deletion(client: AsyncClient, session: AsyncSession):
     expected_status_code = 200
 
-    session.add(User(id=12, email="emailfordeletiontest@gmail.com", hashed_password="fakehashedpassword13894"))
+    session.add(User(id=12, email="emailfordeletiontest@gmail.com", hashed_password="fakehashedpassword13894", created_at=datetime.now(timezone.utc)))
     await session.commit()
 
     delete_response = await client.delete("http://localhost:8000/api/users/12")
